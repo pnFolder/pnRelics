@@ -1,0 +1,134 @@
+# ============================================================================
+#                              НАСТРОЙКА ПРЕДМЕТОВ
+# ============================================================================
+# Ключ под разделом items — название для команды:
+# /pnrelic give <игрок> <название> [количество]
+# Пример: guardian-helmet -> /pnrelic give Steve guardian-helmet 1
+# Название должно быть уникальным среди предметов и рун.
+#
+# ДОСТУПНЫЕ ПАРАМЕТРЫ ПРЕДМЕТА
+#
+# material: DIAMOND_HELMET
+#   Обычный Minecraft-материал. Используйте название материала вашей версии.
+#   Если material не найден, предмет будет создан из STONE.
+#
+# base64: "..."
+#   B64-текстура головы. Можно указать полный B64, ссылку textures.minecraft.net
+#   или хеш текстуры. Используйте либо material, либо base64. Если указаны оба,
+#   приоритет имеет base64.
+#
+# name: "&#60A5FA&lНазвание"
+#   Отображаемое имя. Поддерживаются обычные цвета &a, форматирование &l
+#   и RGB-цвета формата &#RRGGBB.
+#
+# lore: ["&7Первая строка", "", "&fВторая строка"]
+#   Описание предмета. Можно записывать компактным списком в [] или столбиком.
+#
+# active-slots: [HELMET]
+#   Слоты, в которых работают attributes и effects. Доступные значения:
+#   MAIN_HAND  — основная рука;
+#   OFF_HAND   — дополнительная рука, слот щита или тотема;
+#   HELMET     — шлем;
+#   CHESTPLATE — нагрудник;
+#   LEGGINGS   — поножи;
+#   BOOTS      — ботинки.
+#   Можно указать несколько: [MAIN_HAND, OFF_HAND]. Без active-slots бонусы
+#   предмета не активируются.
+#
+# unbreakable: true
+#   true — предмет не теряет прочность; false — работает обычная прочность.
+#   Надпись «Неразрушимый» скрывается отдельно флагом HIDE_UNBREAKABLE.
+#
+# glow: true
+#   true — добавляет визуальное свечение, если на предмете ещё нет чар.
+#   Ложные служебные чары автоматически скрываются.
+#
+# custom-model-data: 1001
+#   Число CustomModelData для ресурспака. Параметр можно полностью убрать.
+#
+# enchantments: {sharpness: 5, unbreaking: 3}
+#   Чары записываются как название: уровень. Разрешены современные названия
+#   (sharpness, protection, unbreaking) и старые Bukkit-названия
+#   (damage_all, protection_environmental, durability). Уровни накладываются
+#   без ванильного ограничения, поэтому sharpness: 10 тоже допустим.
+#
+# flags: true
+#   true  — включить все ItemFlag, доступные на текущей версии сервера;
+#   false — не включать ни одного флага;
+#   [HIDE_UNBREAKABLE, HIDE_ATTRIBUTES] — включить только выбранные флаги.
+#   Неизвестный на текущей версии флаг безопасно пропускается.
+#   Частые значения: HIDE_ENCHANTS, HIDE_ATTRIBUTES, HIDE_UNBREAKABLE,
+#   HIDE_DESTROYS, HIDE_PLACED_ON, HIDE_POTION_EFFECTS, HIDE_DYE.
+#
+# attributes:
+#   attack_damage: {amount: 4.0, operation: ADD_NUMBER}
+#   movement_speed: {amount: 0.10, operation: ADD_SCALAR}
+#   Атрибуты действуют только в active-slots. Названия можно писать без
+#   префикса GENERIC_: attack_damage, max_health, movement_speed,
+#   attack_speed, armor, armor_toughness, knockback_resistance, luck.
+#   Наличие конкретного атрибута зависит от версии Minecraft.
+#   Операции:
+#   ADD_NUMBER        — прибавить число напрямую: 4.0 = +4;
+#   ADD_SCALAR        — прибавить долю от базового значения: 0.10 = +10%;
+#   MULTIPLY_SCALAR_1 — умножить итоговое значение: 0.10 = x1.10.
+#   Короткая запись attack_damage: 4.0 равна ADD_NUMBER.
+#
+# effects: {strength: 2, speed: 1}
+#   Постоянные зельевые эффекты, пока предмет находится в активном слоте.
+#   Число — обычный игровой уровень: 1 = I, 2 = II и так далее.
+#   Используйте Minecraft-названия: speed, strength, resistance,
+#   night_vision, haste, regeneration, fire_resistance и другие.
+#   После извлечения предмета эффект снимается автоматически.
+#
+# stacking: false
+#   false — одинаковое название учитывается один раз, даже если предмет
+#   находится сразу в нескольких разрешённых слотах;
+#   true — бонус каждого такого предмета складывается.
+# ============================================================================
+items:
+  guardian-helmet:
+    material: DIAMOND_HELMET
+    name: "&x&9&1&1&0&F&Fш&x&8&F&1&E&F&Dл&x&8&C&2&B&F&Aᴇ&x&8&A&3&9&F&8м &x&8&5&5&4&F&3х&x&8&3&6&2&F&1ᴘ&x&8&1&7&0&E&Fᴀ&x&7&F&7&E&E&Dн&x&7&C&8&B&E&Aи&x&7&A&9&9&E&8т&x&7&8&A&7&E&6ᴇ&x&7&5&B&4&E&3л&x&7&3&C&2&E&1я"
+    lore:
+      - "&7Экипировка древнего стража."
+      - ""
+      - "&x&6&0&A&5&F&Aпᴘи одᴇтом нᴀ головᴇ:"
+      - "&b• &x&8&A&9&1&9&B+4 мᴀᴋсимᴀльного ɜдоᴘовья"
+      - "&b• &x&8&A&9&1&9&Bэффᴇᴋт &x&3&9&2&9&8&D« ночноᴇ ɜᴘᴇниᴇ »"
+    active-slots: [HELMET]
+    unbreakable: true
+    glow: false
+    enchantments:
+      protection_environmental: 4
+      durability: 3
+    # true — все доступные флаги; список — только выбранные.
+    flags: [HIDE_UNBREAKABLE]
+    attributes:
+      max_health:
+        amount: 4.0
+        operation: ADD_NUMBER
+    effects:
+      night_vision: 1
+
+  void-blade:
+    material: NETHERITE_SWORD
+    name: "&x&6&E&5&E&C&6ᴋлиноᴋ пустоты"
+    lore:
+      - "&7Лезвие поглощает окружающий свет."
+      - ""
+      - "&x&C&0&8&4&F&Cᴋогдᴀ в основной ᴘуᴋᴇ:"
+      - "&#C084FC• &x&8&3&8&3&8&3+4 ᴋ уᴘону"
+      - "&#C084FC• &x&8&3&8&3&8&3эффᴇᴋт &x&F&F&0&0&0&0« силᴀ ɪ »"
+    active-slots: [MAIN_HAND]
+    unbreakable: true
+    glow: true
+    enchantments:
+      damage_all: 5
+      durability: 3
+    flags: [HIDE_UNBREAKABLE]
+    attributes:
+      attack_damage:
+        amount: 4.0
+        operation: ADD_NUMBER
+    effects:
+      strength: 1

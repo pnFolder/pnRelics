@@ -1,0 +1,69 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '8.3.9'
+}
+
+group = 'ru.privatenull'
+version = '1.0.0'
+
+base {
+    archivesName = 'pnRelics'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'papermc-repo'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+}
+
+dependencies {
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly 'com.mojang:authlib:1.5.25'
+    implementation 'org.bstats:bstats-bukkit:3.2.1'
+    implementation('ru.privatenull:pnLibrary:1.0.0') {
+        transitive = false
+    }
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.yaml:snakeyaml:1.28'
+    testImplementation 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+tasks.shadowJar {
+    archiveClassifier.set('')
+    archiveFileName.set("pnRelics-${project.version}.jar")
+    mergeServiceFiles()
+    relocate 'org.bstats', 'ru.privatenull.pnrelics.libs.bstats'
+    relocate 'ru.privatenull.pnlibrary', 'ru.privatenull.pnrelics.libs.pnlibrary'
+}
+
+tasks.jar {
+    archiveClassifier.set('plain')
+}
+
+tasks.build {
+    dependsOn tasks.shadowJar
+}
+
+tasks.processResources {
+    filteringCharset = 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand(version: project.version)
+    }
+}

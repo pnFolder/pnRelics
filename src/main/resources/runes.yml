@@ -1,0 +1,98 @@
+# ============================================================================
+#                                НАСТРОЙКА РУН
+# ============================================================================
+# Ключ под разделом runes — название для команды:
+# /pnrelic give <игрок> <название> [количество]
+# Пример: flame -> /pnrelic give Steve flame 1
+# Название должно быть уникальным среди рун и предметов.
+#
+# ГЛАВНОЕ ПРАВИЛО РУН
+# Руна всегда работает ТОЛЬКО в дополнительной руке — слоте щита и тотема.
+# Перенос клавишей F в основную руку отключает её бонусы. После извлечения
+# из дополнительной руки атрибуты и эффекты снимаются автоматически.
+# active-slots для рун писать не нужно: слот зафиксирован логикой плагина.
+#
+# ВНЕШНИЙ ВИД
+# base64: "..." — B64-голова. Принимается полный B64, ссылка
+# textures.minecraft.net или хеш текстуры.
+# material: PRISMARINE_CRYSTALS — любой обычный Minecraft-материал.
+# Используйте один из этих параметров. Если указаны оба, приоритет у base64.
+#
+# ОБЩИЕ ПАРАМЕТРЫ ПРЕДМЕТА
+# name — имя; lore — описание; поддерживаются &-цвета и RGB &#RRGGBB.
+# unbreakable: true/false — отключает или включает потерю прочности.
+# glow: true/false — включает или выключает визуальное свечение.
+# custom-model-data: 1001 — модель из ресурспака, параметр необязательный.
+# enchantments: {unbreaking: 3} — чары в формате название: уровень.
+# Уровни чар могут превышать ванильное ограничение.
+#
+# ФЛАГИ
+# flags: true — все доступные на версии сервера ItemFlag.
+# flags: false — без флагов.
+# flags: [HIDE_ENCHANTS, HIDE_ATTRIBUTES] — только выбранные флаги.
+# Неизвестные на текущей версии флаги пропускаются без ошибки.
+#
+# АТРИБУТЫ
+# attributes:
+#   attack_damage: {amount: 3.0, operation: ADD_NUMBER}
+#   movement_speed: {amount: 0.10, operation: ADD_SCALAR}
+# ADD_NUMBER = плоская прибавка; ADD_SCALAR = доля от базы;
+# MULTIPLY_SCALAR_1 = множитель итогового значения. Короткая запись
+# attack_damage: 3.0 автоматически использует ADD_NUMBER.
+#
+# ЭФФЕКТЫ
+# effects: {strength: 2, speed: 1}
+# Число является обычным игровым уровнем: 1 = I, 2 = II.
+# Можно использовать speed, strength, resistance, regeneration,
+# night_vision, haste, fire_resistance и остальные Minecraft-эффекты.
+#
+# stacking для рун обычно не нужен: активный слот дополнительной руки один.
+# ============================================================================
+runes:
+  flame:
+    base64: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzQ3MjM3NDM3ODQ2MDc5N2M4MWYzY2Q4ZjIwNWU5YzA2NjQyMjdlYzY2NmYxMjFlYjI1YjhjNmU3YjY5OTkifX19"
+    name: "&#FF6B35&lРуна пламени"
+    lore:
+      - "&7Древняя руна, наполненная огнём."
+      - ""
+      - "&#FF6B35В дополнительной руке:"
+      - "&f• Сила II"
+      - "&f• +3 к урону"
+    glow: true
+    attributes:
+      attack_damage:
+        amount: 3.0
+        operation: ADD_NUMBER
+    effects:
+      strength: 2
+
+  wind:
+    base64: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQ4NzY0MzhlOGMxYjgzODVjYzQ4N2ZjNjgxY2Q0YzdkYzZlYTUwN2RhZTdmYzE0NjM1ZjhjZTg0OGQ2YTgifX19"
+    name: "&#67E8F9&lРуна ветра"
+    lore:
+      - "&7Воздух вокруг неё никогда не стихает."
+      - ""
+      - "&#67E8F9В дополнительной руке:"
+      - "&f• Скорость II"
+      - "&f• +10% к скорости передвижения"
+    glow: true
+    attributes:
+      movement_speed:
+        amount: 0.10
+        operation: ADD_SCALAR
+    effects:
+      speed: 2
+
+  stone:
+    material: PRISMARINE_CRYSTALS
+    name: "&#C084FC&lКаменная руна"
+    lore:
+      - "&7Пример руны из обычного Minecraft-материала."
+      - ""
+      - "&#C084FCВ дополнительной руке:"
+      - "&f• Сопротивление I"
+    glow: true
+    # true скрывает все доступные флаги предмета.
+    flags: true
+    effects:
+      resistance: 1

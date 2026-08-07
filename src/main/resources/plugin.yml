@@ -1,0 +1,16 @@
+name: pnRelics
+version: '${version}'
+main: ru.privatenull.pnrelics.PnRelicsPlugin
+api-version: '1.16'
+authors: [privatenull]
+website: https://github.com/Dy6HiLa/pnRelics
+description: B64 runes, relics and configurable equipment
+commands:
+  pnrelic:
+    description: Главная команда pnRelics
+    usage: /pnrelic
+permissions:
+  pnrelic.admin:
+    description: Управление рунами и предметами pnRelics
+    default: op
+
