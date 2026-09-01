@@ -21,7 +21,7 @@ public final class PnRelicsPlugin extends JavaPlugin {
     private static final int BSTATS_PLUGIN_NUMBER = 33213;
     private static final long CHECK_PERIOD_TICKS = 10L;
     private static final boolean UPDATES_ENABLED = true;
-    private static final String UPDATE_REPOSITORY = "Dy6HiLa/pnRelics";
+    private static final String UPDATE_REPOSITORY = "pnFolder/pnRelics";
     private static final long UPDATE_PERIOD_HOURS = 6L;
     private static final String SUPPORT_URL = "https://discord.gg/rRbzq6cnc6";
 

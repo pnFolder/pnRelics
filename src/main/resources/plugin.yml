@@ -3,7 +3,7 @@ version: '${version}'
 main: ru.privatenull.pnrelics.PnRelicsPlugin
 api-version: '1.16'
 authors: [privatenull]
-website: https://github.com/Dy6HiLa/pnRelics
+website: https://github.com/pnFolder/pnRelics
 description: B64 runes, relics and configurable equipment
 commands:
   pnrelic:
