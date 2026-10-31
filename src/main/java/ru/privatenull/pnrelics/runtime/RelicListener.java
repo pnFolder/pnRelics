@@ -16,21 +16,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import ru.privatenull.pnlibrary.update.UpdateChecker;
 
 public final class RelicListener implements Listener {
     private final RelicEffectService effects;
-    private final UpdateChecker updates;
 
-    public RelicListener(RelicEffectService effects, UpdateChecker updates) {
+    public RelicListener(RelicEffectService effects) {
         this.effects = effects;
-        this.updates = updates;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event) {
         effects.syncNextTick(event.getPlayer());
-        if (updates != null) updates.notifyAdminOnJoin(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

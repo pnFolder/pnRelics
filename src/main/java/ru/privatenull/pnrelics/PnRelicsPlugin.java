@@ -1,13 +1,12 @@
 package ru.privatenull.pnrelics;
 
-import org.bstats.bukkit.Metrics;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.privatenull.pnlibrary.gui.GuiOpenAnimationService;
-import ru.privatenull.pnlibrary.gui.GuiUpdateService;
-import ru.privatenull.pnlibrary.lifecycle.PluginBanner;
-import ru.privatenull.pnlibrary.update.UpdateChecker;
-import ru.privatenull.pnlibrary.update.UpdateSettings;
+import ru.privatenull.pnrelics.gui.GuiOpenAnimationService;
+import ru.privatenull.pnrelics.gui.GuiUpdateService;
+import org.pnfolder.pnlibrary.bukkit.bootstrap.PnLibraryBootstrap;
+import ru.privatenull.pnrelics.bootstrap.PnLibraryLifecycleListener;
+import ru.privatenull.pnrelics.integration.PnLibraryRuntime;
 import ru.privatenull.pnrelics.command.RelicCommand;
 import ru.privatenull.pnrelics.config.Messages;
 import ru.privatenull.pnrelics.config.RelicRegistry;
@@ -17,13 +16,10 @@ import ru.privatenull.pnrelics.runtime.RelicEffectService;
 import ru.privatenull.pnrelics.runtime.RelicListener;
 import ru.privatenull.pnrelics.util.ServerVersion;
 
+import java.util.logging.Level;
+
 public final class PnRelicsPlugin extends JavaPlugin {
-    private static final int BSTATS_PLUGIN_NUMBER = 33213;
     private static final long CHECK_PERIOD_TICKS = 10L;
-    private static final boolean UPDATES_ENABLED = true;
-    private static final String UPDATE_REPOSITORY = "pnFolder/pnRelics";
-    private static final long UPDATE_PERIOD_HOURS = 6L;
-    private static final String SUPPORT_URL = "https://discord.gg/rRbzq6cnc6";
 
     private Messages messages;
     private RelicRegistry registry;
@@ -32,16 +28,43 @@ public final class PnRelicsPlugin extends JavaPlugin {
     private GuiOpenAnimationService guiAnimations;
     private RelicListMenu listMenu;
     private RelicEffectService effects;
-    private UpdateChecker updateChecker;
+    private boolean pnLibraryReady;
+    private PnLibraryRuntime pnRuntime;
+
+    @Override
+    public void onLoad() {
+        try {
+            pnLibraryReady = PnLibraryBootstrap.ensureInstalled(this, PnLibraryRuntime.MINIMUM_VERSION);
+        } catch (Throwable failure) {
+            getLogger().log(Level.SEVERE,
+                    "Не удалось автоматически подготовить pnLibrary. pnRelics не будет запущен.", failure);
+        }
+    }
 
     @Override
     public void onEnable() {
+        if (!pnLibraryReady) {
+            getLogger().severe("pnLibrary не подготовлена: проверьте доступ к GitHub и ошибку загрузки выше.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        try {
+            pnRuntime = PnLibraryRuntime.connect(this);
+        } catch (Throwable failure) {
+            getLogger().log(Level.SEVERE, "pnLibrary не удалось включить или подключить к pnRelics.", failure);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        getServer().getPluginManager().registerEvents(new PnLibraryLifecycleListener(this), this);
+
         ServerVersion version = ServerVersion.current();
         if (!version.supported()) {
             getLogger().severe("pnRelics поддерживает Minecraft 1.16.x-1.21.x. Обнаружено: " + version);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        pnRuntime.register(() -> registry == null ? "-" : registry.all().size() + " relics");
 
         messages = new Messages(this);
         registry = new RelicRegistry(this);
@@ -66,13 +89,11 @@ public final class PnRelicsPlugin extends JavaPlugin {
         command.setExecutor(executor);
         command.setTabCompleter(executor);
 
-        setupUpdater();
         getServer().getPluginManager().registerEvents(listMenu, this);
-        getServer().getPluginManager().registerEvents(new RelicListener(effects, updateChecker), this);
-        new Metrics(this, BSTATS_PLUGIN_NUMBER);
+        getServer().getPluginManager().registerEvents(new RelicListener(effects), this);
 
         getLogger().info("Режим совместимости: Minecraft " + version);
-        PluginBanner.enabled(this, SUPPORT_URL);
+        pnRuntime.enabled(version.toString(), registry.all().size());
     }
 
     @Override
@@ -80,8 +101,7 @@ public final class PnRelicsPlugin extends JavaPlugin {
         if (listMenu != null) listMenu.closeAll();
         if (guiAnimations != null) guiAnimations.shutdown();
         if (effects != null) effects.shutdown();
-        if (updateChecker != null) updateChecker.cancel();
-        PluginBanner.disabled(this, SUPPORT_URL);
+        if (pnRuntime != null) pnRuntime.close();
     }
 
     public int reloadPluginData() {
@@ -91,22 +111,6 @@ public final class PnRelicsPlugin extends JavaPlugin {
         listMenu.load();
         effects.start(CHECK_PERIOD_TICKS);
         effects.refreshAll();
-        updateChecker.restart(updateSettings());
         return registry.all().size();
-    }
-
-    private void setupUpdater() {
-        updateChecker = new UpdateChecker(this, updateSettings());
-        updateChecker.start();
-    }
-
-    private UpdateSettings updateSettings() {
-        return new UpdateSettings(
-                UPDATES_ENABLED,
-                UPDATE_REPOSITORY,
-                "pnrelic.admin",
-                UPDATE_PERIOD_HOURS,
-                SUPPORT_URL
-        );
     }
 }

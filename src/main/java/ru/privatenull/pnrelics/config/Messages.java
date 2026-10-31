@@ -3,7 +3,7 @@ package ru.privatenull.pnrelics.config;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.privatenull.pnlibrary.text.ColorUtil;
+import ru.privatenull.pnrelics.util.ColorUtil;
 
 import java.io.File;
 import java.util.ArrayList;
