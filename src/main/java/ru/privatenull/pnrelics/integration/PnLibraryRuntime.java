@@ -21,6 +21,7 @@ public final class PnLibraryRuntime implements AutoCloseable {
     public static final String MINIMUM_VERSION = "0.0.1-dev.6";
     private static final String MODULE_ID = "pnrelics";
     private static final int BSTATS_PROJECT_ID = 33213;
+    private static final String FASTSTATS_TOKEN = "d1b2d467ca1dd9fe97e8163b3dd8db90";
     private static final String POLICY_SOURCE =
             "https://raw.githubusercontent.com/pnFolder/pnlibrary-policy/main/.pnlibrary/policies/PnRelicsPolicy.java";
     private static final String UPDATE_OWNER = "pnFolder";
@@ -61,7 +62,7 @@ public final class PnLibraryRuntime implements AutoCloseable {
                             .onError(PolicyErrorAction.KEEP_RUNNING)
                             .support(PnLibraryIdentity.SUPPORT_URL)
                             .build())
-                    .metrics(metrics -> metrics.bStats(BSTATS_PROJECT_ID))
+                    .metrics(metrics -> metrics.bStats(BSTATS_PROJECT_ID).fastStats(FASTSTATS_TOKEN))
                     .updates(UPDATE_OWNER, UPDATE_REPOSITORY, updater -> updater
                             .channel(UpdateChannel.STABLE)
                             .automaticDownload(false)
