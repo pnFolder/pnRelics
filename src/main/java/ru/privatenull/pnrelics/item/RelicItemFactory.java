@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.privatenull.pnlibrary.text.ColorUtil;
+import ru.privatenull.pnrelics.util.ColorUtil;
 import ru.privatenull.pnrelics.model.ItemSpec;
 import ru.privatenull.pnrelics.model.RelicDefinition;
 import ru.privatenull.pnrelics.model.RelicKind;

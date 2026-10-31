@@ -18,27 +18,33 @@ repositories {
     }
 }
 
+def pnLibraryVersion = '0.0.1-dev.6'
+
 dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'com.mojang:authlib:1.5.25'
-    implementation 'org.bstats:bstats-bukkit:3.2.1'
-    implementation('ru.privatenull:pnLibrary:1.0.0') {
-        transitive = false
-    }
+    // The shared runtime plugin is installed by the pnLibrary bootstrap that is shaded into the jar;
+    // only its public API is needed to compile.
+    implementation "io.github.pnfolder:pnlibrary-bootstrap-bukkit:${pnLibraryVersion}"
+    compileOnly "io.github.pnfolder:pnlibrary-api:${pnLibraryVersion}"
+    testImplementation "io.github.pnfolder:pnlibrary-api:${pnLibraryVersion}"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testImplementation 'org.yaml:snakeyaml:1.28'
     testImplementation 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = 17
+}
+
+configurations.configureEach {
+    attributes.attribute(org.gradle.api.attributes.java.TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 21)
 }
 
 tasks.withType(Test).configureEach {
@@ -49,8 +55,11 @@ tasks.shadowJar {
     archiveClassifier.set('')
     archiveFileName.set("pnRelics-${project.version}.jar")
     mergeServiceFiles()
-    relocate 'org.bstats', 'ru.privatenull.pnrelics.libs.bstats'
-    relocate 'ru.privatenull.pnlibrary', 'ru.privatenull.pnrelics.libs.pnlibrary'
+    // Runtime services (lifecycle, updates, metrics) belong to the installed pnLibrary plugin.
+    relocate 'com.google.gson', 'ru.privatenull.pnrelics.libs.gson'
+    relocate 'org.pnfolder.pnlibrary.bootstrap', 'ru.privatenull.pnrelics.libs.pnbootstrap'
+    relocate 'org.pnfolder.pnlibrary.bukkit.bootstrap', 'ru.privatenull.pnrelics.libs.pnbootstrap.bukkit'
+    relocate 'org.pnfolder.pnlibrary.console', 'ru.privatenull.pnrelics.libs.pnbootstrap.console'
 }
 
 tasks.jar {
