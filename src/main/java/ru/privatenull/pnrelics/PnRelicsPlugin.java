@@ -1,7 +1,6 @@
 package ru.privatenull.pnrelics;
 
 import ru.privatenull.pnrelics.integration.Log;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.privatenull.pnrelics.gui.GuiOpenAnimationService;
 import ru.privatenull.pnrelics.gui.GuiUpdateService;
@@ -84,10 +83,7 @@ public final class PnRelicsPlugin extends JavaPlugin {
         effects.start(CHECK_PERIOD_TICKS);
 
         RelicCommand executor = new RelicCommand(this, registry, itemFactory, listMenu, messages);
-        PluginCommand command = getCommand("pnrelic");
-        if (command == null) throw new IllegalStateException("Команда pnrelic отсутствует в plugin.yml");
-        command.setExecutor(executor);
-        command.setTabCompleter(executor);
+        pnRuntime.registerCommand(executor.definition());
 
         getServer().getPluginManager().registerEvents(listMenu, this);
         getServer().getPluginManager().registerEvents(new RelicListener(effects), this);

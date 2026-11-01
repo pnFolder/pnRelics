@@ -7,7 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitTask;
+import org.pnfolder.pnlibrary.api.tasks.TaskHandle;
+import ru.privatenull.pnrelics.integration.PluginTasks;
 import ru.privatenull.pnrelics.config.RelicRegistry;
 import ru.privatenull.pnrelics.item.RelicItemFactory;
 import ru.privatenull.pnrelics.model.ActivationSlot;
@@ -38,7 +39,7 @@ public final class RelicEffectService {
     private final Map<String, PotionEffectType> effectCache = new HashMap<>();
     private final Set<String> unknownEffects = new HashSet<>();
     private long periodTicks;
-    private BukkitTask task;
+    private TaskHandle task;
 
     public RelicEffectService(JavaPlugin plugin, RelicRegistry registry, RelicItemFactory items) {
         this.plugin = plugin;
@@ -50,8 +51,7 @@ public final class RelicEffectService {
     public void start(long requestedPeriod) {
         stopTask();
         periodTicks = Math.max(1L, requestedPeriod);
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::syncOnline,
-                1L, periodTicks);
+        task = PluginTasks.timer(1L, periodTicks, this::syncOnline);
     }
 
     public void sync(Player player) {
@@ -69,7 +69,7 @@ public final class RelicEffectService {
 
     public void syncNextTick(Player player) {
         if (player == null) return;
-        plugin.getServer().getScheduler().runTask(plugin, () -> sync(player));
+        PluginTasks.run(() -> sync(player));
     }
 
     public void refreshAll() {

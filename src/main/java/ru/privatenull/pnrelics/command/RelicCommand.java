@@ -2,12 +2,14 @@ package ru.privatenull.pnrelics.command;
 
 import ru.privatenull.pnrelics.integration.Log;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.pnfolder.pnlibrary.api.commands.ArgumentType;
+import org.pnfolder.pnlibrary.api.commands.BadUsage;
+import org.pnfolder.pnlibrary.api.commands.CommandContext;
+import org.pnfolder.pnlibrary.api.commands.CommandDefinition;
+import org.pnfolder.pnlibrary.api.commands.NoPermission;
 import ru.privatenull.pnrelics.PnRelicsPlugin;
 import ru.privatenull.pnrelics.config.Messages;
 import ru.privatenull.pnrelics.config.RelicRegistry;
@@ -21,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public final class RelicCommand implements CommandExecutor, TabCompleter {
+public final class RelicCommand {
     private static final String PERMISSION = "pnrelic.admin";
     private static final List<String> SUBCOMMANDS = List.of("list", "give", "reload");
     private static final List<String> AMOUNTS = List.of("1", "2", "4", "8", "16", "32", "64");
@@ -41,40 +43,52 @@ public final class RelicCommand implements CommandExecutor, TabCompleter {
         this.messages = messages;
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission(PERMISSION)) {
-            messages.send(sender, "no-permission");
-            return true;
-        }
-        if (args.length == 0) {
-            sendHelp(sender);
-            return true;
-        }
-
-        switch (args[0].toLowerCase(Locale.ROOT)) {
-            case "list" -> openList(sender);
-            case "give" -> give(sender, args);
-            case "reload" -> reload(sender);
-            default -> sendHelp(sender);
-        }
-        return true;
+    /** Дерево команды /pnrelic для pnLibrary: имя, права, подсказки и тексты прежние. */
+    public CommandDefinition definition() {
+        return CommandDefinition.builder("pnrelic")
+                .permission(PERMISSION)
+                .consoleBypassesPermission(true)
+                .onError(NoPermission.class, (context, error) -> messages.send(bukkit(context), "no-permission"))
+                .onError(BadUsage.class, (context, error) -> sendHelp(bukkit(context)))
+                .executes(context -> sendHelp(bukkit(context)))
+                .literal("list", node -> node.executes(context -> openList(bukkit(context))))
+                .literal("reload", node -> node.executes(context -> reload(bukkit(context))))
+                .literal("give", node -> node.argument("player", ArgumentType.string(), player -> {
+                    player.suggests(context -> filter(onlinePlayers(), partial(context)));
+                    player.argument("relic", ArgumentType.string(), relic -> {
+                        relic.suggests(context -> filter(registry.names(), partial(context)));
+                        relic.executes(context -> give(bukkit(context), context, false));
+                        relic.argument("amount", ArgumentType.string(), amount -> {
+                            amount.suggests(context -> filter(AMOUNTS, partial(context)));
+                            amount.executes(context -> give(bukkit(context), context, true));
+                        });
+                    });
+                }))
+                .build();
     }
 
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (!sender.hasPermission(PERMISSION)) return List.of();
-        if (args.length == 1) return filter(SUBCOMMANDS, args[0]);
-        if (args[0].equalsIgnoreCase("give")) {
-            if (args.length == 2) {
-                List<String> players = new ArrayList<>();
-                for (Player player : Bukkit.getOnlinePlayers()) players.add(player.getName());
-                return filter(players, args[1]);
+    /** Отправитель Bukkit: игрок или консоль (так же вели себя прежние обработчики). */
+    private static CommandSender bukkit(CommandContext context) {
+        if (!context.getSender().isConsole()) {
+            try {
+                Player player = Bukkit.getPlayer(java.util.UUID.fromString(context.getSender().getId()));
+                if (player != null) return player;
+            } catch (IllegalArgumentException notPlayer) {
+                // Не игрок (например, командный блок): обрабатывается как консоль.
             }
-            if (args.length == 3) return filter(registry.names(), args[2]);
-            if (args.length == 4) return filter(AMOUNTS, args[3]);
         }
-        return List.of();
+        return Bukkit.getConsoleSender();
+    }
+
+    private static String partial(CommandContext context) {
+        List<String> arguments = context.getArguments();
+        return arguments.isEmpty() ? "" : arguments.get(arguments.size() - 1);
+    }
+
+    private static List<String> onlinePlayers() {
+        List<String> players = new ArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers()) players.add(player.getName());
+        return players;
     }
 
     private void openList(CommandSender sender) {
@@ -85,11 +99,9 @@ public final class RelicCommand implements CommandExecutor, TabCompleter {
         menu.open(player);
     }
 
-    private void give(CommandSender sender, String[] args) {
-        if (args.length < 3 || args.length > 4) {
-            sendHelp(sender);
-            return;
-        }
+    private void give(CommandSender sender, CommandContext context, boolean withAmount) {
+        String[] args = {"give", context.<String>get("player"), context.<String>get("relic"),
+                withAmount ? context.<String>get("amount") : null};
         Player target = Bukkit.getPlayerExact(args[1]);
         if (target == null) {
             messages.send(sender, "player-not-found", "player", args[1]);
@@ -100,7 +112,7 @@ public final class RelicCommand implements CommandExecutor, TabCompleter {
             messages.send(sender, "relic-not-found", "name", args[2]);
             return;
         }
-        int amount = args.length == 4 ? parseAmount(args[3]) : 1;
+        int amount = withAmount ? parseAmount(args[3]) : 1;
         if (amount < 1 || amount > 2304) {
             messages.send(sender, "invalid-amount");
             return;

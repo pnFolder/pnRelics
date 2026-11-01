@@ -68,6 +68,7 @@ public final class PnLibraryRuntime implements AutoCloseable {
                             .automaticDownload(false)
                             .artifact("(?i)^pnRelics-[0-9].*\\.jar$", 17)));
             Log.bind(owner, module);
+            PluginTasks.bind(module.getTasks());
         } catch (RuntimeException failure) {
             closeRegistration();
             throw failure;
@@ -103,6 +104,11 @@ public final class PnLibraryRuntime implements AutoCloseable {
         }
     }
 
+    /** Регистрирует команду в pnLibrary (записи в plugin.yml не нужно). */
+    public void registerCommand(org.pnfolder.pnlibrary.api.commands.CommandDefinition command) {
+        module.registerCommand(command);
+    }
+
     public String supportUrl() {
         return PnLibraryIdentity.SUPPORT_URL;
     }
@@ -110,6 +116,7 @@ public final class PnLibraryRuntime implements AutoCloseable {
     @Override
     public void close() {
         stopped();
+        PluginTasks.bind(null);
         module = null;
         closeRegistration();
     }
