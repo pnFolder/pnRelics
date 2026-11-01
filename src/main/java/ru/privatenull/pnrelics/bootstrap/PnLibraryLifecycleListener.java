@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import ru.privatenull.pnrelics.PnRelicsPlugin;
 
-/** Keeps pnSeller from outliving the shared runtime during shutdown or manual unload. */
+/** Keeps pnRelics from outliving the shared runtime during shutdown or manual unload. */
 public final class PnLibraryLifecycleListener implements Listener {
 
     private final PnRelicsPlugin plugin;
@@ -19,7 +19,7 @@ public final class PnLibraryLifecycleListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPluginDisable(PluginDisableEvent event) {
         if (!event.getPlugin().getName().equalsIgnoreCase("pnLibrary") || !plugin.isEnabled()) return;
-        Log.warning("pnLibrary отключается; pnSeller будет безопасно остановлен первым.");
+        Log.warning("pnLibrary отключается; pnRelics будет безопасно остановлен первым.");
         plugin.getServer().getPluginManager().disablePlugin(plugin);
     }
 }
