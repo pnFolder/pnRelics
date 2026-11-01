@@ -81,7 +81,7 @@ public final class PnLibraryRuntime implements AutoCloseable {
                     .ok("Minecraft", serverVersion)
                     .ok("Руны и предметы", String.valueOf(relics))
                     .ok("Команда", "/pnrelic")
-                    .ok("Диагностика", "/pndebug " + MODULE_ID)
+                    .ok("Диагностика", "/pn debug " + MODULE_ID)
                     .show();
         } catch (RuntimeException failure) {
             owner.getLogger().log(Level.FINE, "Не удалось вывести сообщение о запуске pnRelics", failure);
