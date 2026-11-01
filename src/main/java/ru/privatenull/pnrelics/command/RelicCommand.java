@@ -1,5 +1,6 @@
 package ru.privatenull.pnrelics.command;
 
+import ru.privatenull.pnrelics.integration.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -121,7 +122,7 @@ public final class RelicCommand implements CommandExecutor, TabCompleter {
             messages.send(sender, "reload-success", "count", String.valueOf(count));
         } catch (RuntimeException exception) {
             messages.send(sender, "reload-failed", "error", safeMessage(exception));
-            plugin.getLogger().warning("Ошибка перезагрузки: " + safeMessage(exception));
+            Log.error("Ошибка перезагрузки", exception);
         }
     }
 

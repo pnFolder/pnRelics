@@ -67,6 +67,7 @@ public final class PnLibraryRuntime implements AutoCloseable {
                             .channel(UpdateChannel.STABLE)
                             .automaticDownload(false)
                             .artifact("(?i)^pnRelics-[0-9].*\\.jar$", 17)));
+            Log.bind(owner, module);
         } catch (RuntimeException failure) {
             closeRegistration();
             throw failure;
@@ -114,6 +115,7 @@ public final class PnLibraryRuntime implements AutoCloseable {
     }
 
     private void closeRegistration() {
+        Log.unbind();
         PluginRegistration closing = registration;
         registration = null;
         if (closing != null && !closing.isClosed()) closing.close();

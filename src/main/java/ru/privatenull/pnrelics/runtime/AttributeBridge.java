@@ -1,5 +1,6 @@
 package ru.privatenull.pnrelics.runtime;
 
+import ru.privatenull.pnrelics.integration.Log;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -27,7 +28,7 @@ public final class AttributeBridge {
     public Applied apply(Player player, AttributeBonus bonus, String source) {
         Attribute attribute = resolveAttribute(bonus.attribute());
         if (attribute == null) {
-            plugin.getLogger().warning("Неизвестный атрибут: " + bonus.attribute());
+            Log.warning("Неизвестный атрибут: " + bonus.attribute());
             return null;
         }
         AttributeInstance instance = player.getAttribute(attribute);
@@ -39,8 +40,7 @@ public final class AttributeBridge {
             instance.addModifier(modifier);
             return new Applied(instance, modifier);
         } catch (ReflectiveOperationException | IllegalArgumentException | LinkageError exception) {
-            plugin.getLogger().warning("Не удалось применить атрибут " + bonus.attribute() + ": "
-                    + exception.getMessage());
+            Log.error("Не удалось применить атрибут " + bonus.attribute(), exception);
             return null;
         }
     }

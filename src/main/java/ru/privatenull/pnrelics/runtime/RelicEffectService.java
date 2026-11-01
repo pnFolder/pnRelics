@@ -1,5 +1,6 @@
 package ru.privatenull.pnrelics.runtime;
 
+import ru.privatenull.pnrelics.integration.Log;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -187,7 +188,7 @@ public final class RelicEffectService {
         PotionEffectType legacy = PotionEffectType.getByName(legacyEffectName(modern));
         if (legacy == null) {
             unknownEffects.add(cacheName);
-            plugin.getLogger().warning("Неизвестный эффект: " + configured);
+            Log.warning("Неизвестный эффект: " + configured);
         } else {
             effectCache.put(cacheName, legacy);
         }

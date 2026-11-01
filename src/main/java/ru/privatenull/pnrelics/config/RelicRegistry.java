@@ -1,5 +1,6 @@
 package ru.privatenull.pnrelics.config;
 
+import ru.privatenull.pnrelics.integration.Log;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,7 +40,7 @@ public final class RelicRegistry {
         loadFile(new File(plugin.getDataFolder(), "runes.yml"), "runes", RelicKind.RUNE, loaded);
         loadFile(new File(plugin.getDataFolder(), "items.yml"), "items", RelicKind.ITEM, loaded);
         definitions = Collections.unmodifiableMap(loaded);
-        plugin.getLogger().info("Загружено рун и предметов: " + definitions.size());
+        Log.info("Загружено рун и предметов: " + definitions.size());
     }
 
     public RelicDefinition find(String name) {

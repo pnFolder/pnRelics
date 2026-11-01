@@ -1,5 +1,6 @@
 package ru.privatenull.pnrelics.item;
 
+import ru.privatenull.pnrelics.integration.Log;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
@@ -40,7 +41,7 @@ public final class SkullFactory {
             head.setItemMeta(meta);
         } catch (ReflectiveOperationException | RuntimeException | LinkageError exception) {
             if (REPORTED_TEXTURES.add(texture)) {
-                Bukkit.getLogger().warning("pnRelics: не удалось применить B64-текстуру: " + exception.getMessage());
+                Log.error("pnRelics: не удалось применить B64-текстуру", exception);
             }
         }
         return head;

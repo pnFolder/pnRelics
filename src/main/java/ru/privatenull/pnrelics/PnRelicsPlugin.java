@@ -1,5 +1,6 @@
 package ru.privatenull.pnrelics;
 
+import ru.privatenull.pnrelics.integration.Log;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.privatenull.pnrelics.gui.GuiOpenAnimationService;
@@ -36,22 +37,21 @@ public final class PnRelicsPlugin extends JavaPlugin {
         try {
             pnLibraryReady = PnLibraryBootstrap.ensureInstalled(this, PnLibraryRuntime.MINIMUM_VERSION);
         } catch (Throwable failure) {
-            getLogger().log(Level.SEVERE,
-                    "Не удалось автоматически подготовить pnLibrary. pnRelics не будет запущен.", failure);
+            Log.error("Не удалось автоматически подготовить pnLibrary. pnRelics не будет запущен.", failure);
         }
     }
 
     @Override
     public void onEnable() {
         if (!pnLibraryReady) {
-            getLogger().severe("pnLibrary не подготовлена: проверьте доступ к GitHub и ошибку загрузки выше.");
+            Log.error("pnLibrary не подготовлена: проверьте доступ к GitHub и ошибку загрузки выше.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
         try {
             pnRuntime = PnLibraryRuntime.connect(this);
         } catch (Throwable failure) {
-            getLogger().log(Level.SEVERE, "pnLibrary не удалось включить или подключить к pnRelics.", failure);
+            Log.error("pnLibrary не удалось включить или подключить к pnRelics.", failure);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -59,7 +59,7 @@ public final class PnRelicsPlugin extends JavaPlugin {
 
         ServerVersion version = ServerVersion.current();
         if (!version.supported()) {
-            getLogger().severe("pnRelics поддерживает Minecraft 1.16.x-1.21.x. Обнаружено: " + version);
+            Log.error("pnRelics поддерживает Minecraft 1.16.x-1.21.x. Обнаружено: " + version);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -71,7 +71,7 @@ public final class PnRelicsPlugin extends JavaPlugin {
         try {
             registry.load();
         } catch (RuntimeException exception) {
-            getLogger().severe("Не удалось загрузить руны и предметы: " + exception.getMessage());
+            Log.error("Не удалось загрузить руны и предметы", exception);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -92,7 +92,7 @@ public final class PnRelicsPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(listMenu, this);
         getServer().getPluginManager().registerEvents(new RelicListener(effects), this);
 
-        getLogger().info("Режим совместимости: Minecraft " + version);
+        Log.info("Режим совместимости: Minecraft " + version);
         pnRuntime.started(version.toString(), registry.all().size());
     }
 
