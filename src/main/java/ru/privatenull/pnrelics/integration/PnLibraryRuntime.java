@@ -74,12 +74,32 @@ public final class PnLibraryRuntime implements AutoCloseable {
     }
 
     /** Shows the console card: the plugin has started. */
-    public void enabled(String serverVersion, int relics) {
+    public void started(String serverVersion, int relics) {
         if (module == null) return;
-        module.getLifecycle().enabled()
-                .ok("Minecraft", serverVersion)
-                .ok("Руны и предметы", String.valueOf(relics))
-                .show();
+        try {
+            module.getLifecycle().enabled()
+                    .ok("Minecraft", serverVersion)
+                    .ok("Руны и предметы", String.valueOf(relics))
+                    .ok("Команда", "/pnrelic")
+                    .ok("Диагностика", "/pndebug " + MODULE_ID)
+                    .show();
+        } catch (RuntimeException failure) {
+            owner.getLogger().log(Level.FINE, "Не удалось вывести сообщение о запуске pnRelics", failure);
+        }
+    }
+
+    /** Shows the console card: the plugin is stopping. Must run before the registration is closed. */
+    public void stopped() {
+        ModuleContext closing = module;
+        if (closing == null || closing.isClosed()) return;
+        try {
+            closing.getLifecycle().disabled()
+                    .ok("Эффекты", "остановлены")
+                    .ok("Меню", "закрыты")
+                    .show();
+        } catch (RuntimeException failure) {
+            owner.getLogger().log(Level.FINE, "Не удалось вывести сообщение об остановке pnRelics", failure);
+        }
     }
 
     public String supportUrl() {
@@ -88,15 +108,8 @@ public final class PnLibraryRuntime implements AutoCloseable {
 
     @Override
     public void close() {
-        ModuleContext closing = module;
+        stopped();
         module = null;
-        if (closing != null && !closing.isClosed()) {
-            try {
-                closing.getLifecycle().disabled().show();
-            } catch (RuntimeException failure) {
-                owner.getLogger().log(Level.FINE, "Не удалось вывести сообщение об остановке pnRelics", failure);
-            }
-        }
         closeRegistration();
     }
 

@@ -93,7 +93,7 @@ public final class PnRelicsPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RelicListener(effects), this);
 
         getLogger().info("Режим совместимости: Minecraft " + version);
-        pnRuntime.enabled(version.toString(), registry.all().size());
+        pnRuntime.started(version.toString(), registry.all().size());
     }
 
     @Override
