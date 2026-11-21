@@ -1,9 +1,9 @@
 package ru.privatenull.pnrelics.integration;
 
-import org.pnfolder.pnlibrary.api.tasks.TaskExecution;
+import org.pnfolder.pnlibrary.api.tasks.spec.TaskExecution;
 import org.pnfolder.pnlibrary.api.tasks.TaskHandle;
 import org.pnfolder.pnlibrary.api.tasks.TaskScope;
-import org.pnfolder.pnlibrary.api.tasks.TaskSpec;
+import org.pnfolder.pnlibrary.api.tasks.spec.TaskSpec;
 
 /**
  * Единственное место, где pnRelics запускает задачи: планировщик pnLibrary ({@code ModuleContext.tasks}).
