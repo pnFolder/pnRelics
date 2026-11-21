@@ -18,7 +18,7 @@ import java.util.logging.Level;
 /** Managed pnLibrary integration loaded only after the dependency is enabled. */
 public final class PnLibraryRuntime implements AutoCloseable {
 
-    public static final String MINIMUM_VERSION = "0.0.1-dev.6";
+    public static final String MINIMUM_VERSION = "0.1.0-dev.6";
     private static final String MODULE_ID = "pnrelics";
     private static final int BSTATS_PROJECT_ID = 33213;
     private static final String FASTSTATS_TOKEN = "d1b2d467ca1dd9fe97e8163b3dd8db90";
